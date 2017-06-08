@@ -205,19 +205,49 @@ def patient_profile(request, username):
         current_patient_status = patient.currentpatientstatus
     except CurrentPatientStatus.DoesNotExist:
         current_patient_status = None
+    patient_medical_status_list = patient.patientmedicalstatus_set.all()
+    if len(patient_medical_status_list) > 0:
+        patient_medical_status = patient_medical_status_list[0]
+    else:
+        patient_medical_status = None
+    patient_diagnosis_list = patient.patientdiagnosis_set.all()
+    if len(patient_diagnosis_list) > 0:
+        patient_diagnosis = patient_diagnosis_list[0]
+    else:
+        patient_diagnosis = None
 
     return render(request, 'User/Profile/patient-profile.html',
-                  {'patient': patient, 'current_patient_status': current_patient_status})
+                  {'user': request.user, 'patient': patient, 'current_patient_status': current_patient_status,
+                   'patient_medical_status': patient_medical_status,
+                   'patient_diagnosis': patient_diagnosis})
 
 
 @login_required(login_url='user:user_login')
 def add_current_patient_status(request, username):
     if request.method == 'GET':
         form = CurrentPatientStatusForm()
-        return render(request, 'User/Profile/add-current-patient-status.html', {'form': form, 'username': username})
+        return render(request, 'User/Profile/add-patient-status.html', {'form': form, 'username': username})
     elif request.method == 'POST':
         patient = CustomUser.objects.get(username=username)
         form = CurrentPatientStatusForm(request.POST)
+        if form.is_valid():
+            patient_form = form.save(commit=False)
+            patient_form.patient = patient
+            patient_form.care_provider = request.user
+            patient_form.save()
+            return HttpResponse("Done")
+        else:
+            return HttpResponse("Invalid Form")
+
+
+@login_required(login_url='user:user_login')
+def add_patient_medical_status(request, username):
+    if request.method == 'GET':
+        form = PatientMedicalStatusForm()
+        return render(request, 'User/Profile/add-patient-status.html', {'form': form, 'username': username})
+    elif request.method == 'POST':
+        patient = CustomUser.objects.get(username=username)
+        form = PatientMedicalStatusForm(request.POST)
         if form.is_valid():
             patient_form = form.save(commit=False)
             patient_form.patient = patient

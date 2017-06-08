@@ -16,5 +16,7 @@ urlpatterns = [
     url(r'^patient/(?P<username>[\w.@\-]+)/$', views.patient_profile, name='patient_profile'),
     url(r'^add/patient/current_status/(?P<username>[\w.@\-]+)/$', views.add_current_patient_status,
         name='add_patient_current_status'),
+    url(r'^add/patient/medical_status/(?P<username>[\w.@\-]+)/$', views.add_patient_medical_status,
+        name='add_patient_medical_status'),
 ]
 urlpatterns = format_suffix_patterns(urlpatterns)

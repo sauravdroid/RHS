@@ -1,8 +1,15 @@
 {% extends 'User/base.html' %}
 {% block body %}
+    {% if user.user_type == 'CG' %}
+        <h1>User is Caregiver</h1>
+        <a href="#">Appoint Doctor</a>
+    {% elif user.user_type == 'DC' %}
+        <h1>User is Doctor</h1>
+    {% endif %}
     <div class="row">
         <div class="col-md-6">
-            <h1>Full Name: {{ patient.get_full_name }}</h1>
+            <h1>Patient Details</h1>
+            <h5>Full Name: {{ patient.get_full_name }}</h5>
             <h5>UHID Adhar Card: {{ patient.patientdetail.uhid }}</h5>
             <h5>Date of Birth: {{ patient.patientdetail.date_of_birth }}</h5>
             <h5>Gender: {{ patient.patientdetail.gender }}</h5>
@@ -14,12 +21,67 @@
 
         <div class="col-md-6">
             {% if current_patient_status %}
-                <h5>Insurance Status {{ current_patient_status.insurance_status }}</h5>
-                <h5>Insurance ID {{ current_patient_status.insurance_id }}</h5>
-                <h5>Insurance ID {{ current_patient_status.insurance_id }}</h5>
+                <h1>Patient Current Status</h1>
+                <h5>Care Provider: {{ current_patient_status.care_provider.get_full_name }}</h5>
+                <h5>Insurance Status: {{ current_patient_status.insurance_status }}</h5>
+                <h5>Insurance ID: {{ current_patient_status.insurance_id }}</h5>
+                <h5>Organ Donor Status: {{ current_patient_status.organ_donor_status }}</h5>
+                <h5>Episode Type: {{ current_patient_status.episode_type }}</h5>
+                <h5>Episode Number: {{ current_patient_status.episode_number }}</h5>
+                <h5>Encounter Type: {{ current_patient_status.encounter_type }}</h5>
+                <h5>Encounter Number: {{ current_patient_status.encounter_no }}</h5>
+                <h5>Encounter Date: {{ current_patient_status.encounter_date_time }}</h5>
+                <h5>Reason for visit: {{ current_patient_status.reason_for_visit }}</h5>
+                <h5>Visit Date: {{ current_patient_status.visit_date }}</h5>
             {% else %}
                 <a href="{% url 'user:add_patient_current_status' patient.username %}">Add Patient's Current Status</a>
             {% endif %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            {% if patient_medical_status %}
+                <h1>Patient Medical Status</h1>
+                <h5>Care Provider: {{ patient_medical_status.care_provider.get_full_name }}</h5>
+                <h5>Vitals Systolic BP: {{ patient_medical_status.vitals_systolic_BP }}</h5>
+                <h5>Vitals Diastolic BP: {{ patient_medical_status.vitals_diastolic_BP }}</h5>
+                <h5>Pulse Rate: {{ patient_medical_status.pulse_rate }}</h5>
+                <h5>Temperature: {{ patient_medical_status.temperature }}</h5>
+                <h5>Temperature Source: {{ patient_medical_status.temperature_source }}</h5>
+                <h5>Respiration Rate: {{ patient_medical_status.respiration_rate }}</h5>
+                <h5>Height (cm): {{ patient_medical_status.height }}</h5>
+                <h5>Weight: {{ patient_medical_status.weight }}</h5>
+                <h5>Blood Group: {{ patient_medical_status.blood_group }}</h5>
+                <h5>Clinical Exam Observation: {{ patient_medical_status.clinical_exam_observation }}</h5>
+                <h5>Investigation Result: {{ patient_medical_status.investigation_result }}</h5>
+                <h5>Date of Input: {{ patient_medical_status.date }}</h5>
+            {% else %}
+                <a href="{% url 'user:add_patient_medical_status' patient.username %}">Add Patient Medical Status</a>
+            {% endif %}
+        </div>
+        <div class="col-md-6">
+            {% if patient_diagnosis %}
+                <h1>Patient Diagnosis</h1>
+                <h5>Doctor: {{ patient_diagnosis.doctor.get_full_name }}</h5>
+                <h5>Diagnosis Type: {{ patient_diagnosis.diagnosis_type }}</h5>
+                <h5>Diagnosis Code Name: {{ patient_diagnosis.diagnosis_code_name }}</h5>
+                <h5>Diagnosis Code Code: {{ patient_diagnosis.diagnosis_code }}</h5>
+                <h5>Diagnosis Description: {{ patient_diagnosis.diagnosis_description }}</h5>
+                <h5>Treatment Plan Investigation: {{ patient_diagnosis.treatment_plan_investigations }}</h5>
+                <h5>Treatment Plan Medication: {{ patient_diagnosis.treatment_plan_medication }}</h5>
+                <h5>Treatment Plan Procdure: {{ patient_diagnosis.treatment_plan_procedure }}</h5>
+                <h5>Treatment Plan Referral: {{ patient_diagnosis.treatment_plan_referral }}</h5>
+                <h5>Other Treatment Plan Type: {{ patient_diagnosis.other_treatment_plan_type }}</h5>
+                <h5>Current Critical Status: {{ patient_diagnosis.current_clinical_status }}</h5>
+                <h5>Diagnosis Date: {{ patient_diagnosis.date }}</h5>
+            {% else %}
+                <h1>Patient not diagnosed yet</h1>
+            {% endif %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+
         </div>
     </div>
 {% endblock %}
