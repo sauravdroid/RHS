@@ -258,6 +258,9 @@ def add_patient_medical_status(request, username):
             return HttpResponse("Invalid Form")
 
 
+def appoint_doctor(request,patient,doctor,caregiver):
+    pass
+
 def check_superuser(req):
     superuser = False
     if req.user.is_authenticated and req.user.is_admin:

@@ -111,7 +111,7 @@ class PatientHistory(models.Model):
 
 class CurrentPatientStatus(models.Model):
     patient = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
-    care_provider = models.ForeignKey(CustomUser, on_delete=models.CASCADE,related_name='+')
+    care_provider = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='+')
     insurance_status = models.CharField(max_length=9)
     insurance_id = models.CharField(max_length=25)
     organ_donor_status = models.BooleanField(default=False)
@@ -126,15 +126,15 @@ class CurrentPatientStatus(models.Model):
 
 class PatientMedicalStatus(models.Model):
     patient = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    care_provider = models.ForeignKey(CustomUser, on_delete=models.CASCADE,related_name='+')
+    care_provider = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='+')
     vitals_systolic_BP = models.IntegerField(max_length=3)
     vitals_diastolic_BP = models.IntegerField(max_length=3)
-    pulse_rate = models.DecimalField(max_digits=4,decimal_places=2)
+    pulse_rate = models.DecimalField(max_digits=4, decimal_places=2)
     temperature = models.IntegerField(max_length=3)
     temperature_source = models.CharField(max_length=6)
     respiration_rate = models.IntegerField(max_length=3)
-    height = models.DecimalField(max_digits=5,decimal_places=2)
-    weight = models.DecimalField(max_digits=5,decimal_places=2)
+    height = models.DecimalField(max_digits=5, decimal_places=2)
+    weight = models.DecimalField(max_digits=5, decimal_places=2)
     blood_group = models.CharField(max_length=3)
     clinical_exam_observation = models.TextField(max_length=4096)
     investigation_result = models.TextField(max_length=4096)
@@ -143,7 +143,7 @@ class PatientMedicalStatus(models.Model):
 
 class PatientDiagnosis(models.Model):
     patient = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    doctor = models.ForeignKey(CustomUser, on_delete=models.CASCADE,related_name='+')
+    doctor = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='+')
     diagnosis_type = models.CharField(max_length=11)
     diagnosis_code_name = models.CharField(max_length=500)
     diagnosis_code = models.CharField(max_length=500)
@@ -160,7 +160,7 @@ class PatientDiagnosis(models.Model):
 
 class PatientMedication(models.Model):
     patient = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    doctor = models.ForeignKey(CustomUser, on_delete=models.CASCADE,related_name='+')
+    doctor = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='+')
     medication_name = models.CharField(max_length=500)
     durg_code = models.CharField(max_length=500)
     strength = models.CharField(max_length=500)
@@ -168,6 +168,26 @@ class PatientMedication(models.Model):
     route = models.CharField(max_length=500)
     frequency = models.CharField(max_length=500)
     date = models.DateTimeField(default=timezone.now())
+
+
+class PatientAppointment(models.Model):
+    patient = models.ForeignKey(CustomUser, related_name='patient_appointment', on_delete=models.CASCADE)
+    doctor = models.ForeignKey(CustomUser, related_name='doctor_appointment', on_delete=models.CASCADE)
+    care_giver = models.ForeignKey(CustomUser, related_name='care_giver_appointment', on_delete=models.CASCADE)
+    date_created = models.DateTimeField(default=timezone.now())
+    appointment_status = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.patient.get_full_name() + '-->' + self.doctor.get_full_name()
+
+
+class DoctorAppointment(models.Model):
+    doctor = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    appointments = models.IntegerField(default=0)
+    completed_appointments = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.doctor.get_full_name() + ' ' + str(self.appointments)
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
