@@ -1,0 +1,12 @@
+{% extends 'User/base.html' %}
+{% load staticfiles %}
+{% block head %}{% endblock %}
+{% block body %}
+    <form method="post" action="">
+        {% csrf_token %}
+        <table>
+            {{ form.as_table }}
+        </table>
+        <input type="submit" value="Register">
+    </form>
+{% endblock %}

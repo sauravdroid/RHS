@@ -1,0 +1,25 @@
+{% extends 'User/base.html' %}
+{% block body %}
+    <div class="row">
+        <div class="col-md-6">
+            <h1>Full Name: {{ patient.get_full_name }}</h1>
+            <h5>UHID Adhar Card: {{ patient.patientdetail.uhid }}</h5>
+            <h5>Date of Birth: {{ patient.patientdetail.date_of_birth }}</h5>
+            <h5>Gender: {{ patient.patientdetail.gender }}</h5>
+            <h5>Age: {{ patient.patientdetail.age }}</h5>
+            <h5>Occupation: {{ patient.patientdetail.occupation }}</h5>
+            <h5>Address: {{ patient.patientdetail.address }}</h5>
+            <h5>Locality: {{ patient.patientdetail.locality }}</h5>
+        </div>
+
+        <div class="col-md-6">
+            {% if current_patient_status %}
+                <h5>Insurance Status {{ current_patient_status.insurance_status }}</h5>
+                <h5>Insurance ID {{ current_patient_status.insurance_id }}</h5>
+                <h5>Insurance ID {{ current_patient_status.insurance_id }}</h5>
+            {% else %}
+                <a href="{% url 'user:add_patient_current_status' patient.username %}">Add Patient's Current Status</a>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
