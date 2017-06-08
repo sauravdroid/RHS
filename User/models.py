@@ -194,3 +194,10 @@ class DoctorAppointment(models.Model):
 def create_auth_token(sender, instance=None, created=False, **kwargs):
     if created:
         Token.objects.create(user=instance)
+
+
+@receiver(post_save, sender=CustomUser)
+def create_doctor_appointment(sender, instance=None, created=False, **kwargs):
+    if created:
+        doctor_appointment = DoctorAppointment(doctor=instance)
+        doctor_appointment.save()

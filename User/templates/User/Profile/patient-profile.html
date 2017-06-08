@@ -2,7 +2,7 @@
 {% block body %}
     {% if user.user_type == 'CG' %}
         <h1>User is Caregiver</h1>
-        <a href="#">Appoint Doctor</a>
+        <a href="{% url 'user:appointment' patient.username %}">Appoint Doctor</a>
     {% elif user.user_type == 'DC' %}
         <h1>User is Doctor</h1>
     {% endif %}

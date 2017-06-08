@@ -12,6 +12,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from .forms import *
 from .permissions import BlackListPermission
 from .serializers import SnippetSerializer, CustomUserSerializer
+from .appointment import doctor_appointment
 
 
 # Create your views here.
@@ -135,6 +136,8 @@ def user_login(request):
 @login_required(login_url='user:user_login')
 def user_profile(request):
     if request.method == 'GET':
+        if request.user.is_admin:
+            return render(request, 'User/Profile/admin-profile.html')
         if request.user.user_type == 'CG':
             return render(request, 'User/Profile/caregiver-profile.html')
         elif request.user.user_type == 'DC':
@@ -205,12 +208,12 @@ def patient_profile(request, username):
         current_patient_status = patient.currentpatientstatus
     except CurrentPatientStatus.DoesNotExist:
         current_patient_status = None
-    patient_medical_status_list = patient.patientmedicalstatus_set.all()
+    patient_medical_status_list = patient.patientmedicalstatus_set.all().order_by('-date')
     if len(patient_medical_status_list) > 0:
         patient_medical_status = patient_medical_status_list[0]
     else:
         patient_medical_status = None
-    patient_diagnosis_list = patient.patientdiagnosis_set.all()
+    patient_diagnosis_list = patient.patientdiagnosis_set.all().order_by('-date')
     if len(patient_diagnosis_list) > 0:
         patient_diagnosis = patient_diagnosis_list[0]
     else:
@@ -258,8 +261,17 @@ def add_patient_medical_status(request, username):
             return HttpResponse("Invalid Form")
 
 
-def appoint_doctor(request,patient,doctor,caregiver):
-    pass
+@login_required(login_url='user:user_login')
+def appointment(request, username):
+    if request.user.user_type == 'CG':
+        patient = CustomUser.objects.get(username=username)
+        if(doctor_appointment(patient, request.user)):
+            return HttpResponse("Successfully Send Appointment")
+        else:
+            return HttpResponse("There is already a pending appointment")
+    else:
+        return HttpResponse('<h1>Not authenticated to view this page</h1>')
+
 
 def check_superuser(req):
     superuser = False
